@@ -16,8 +16,8 @@ body {
 nav {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 20px 60px;
-  background: #0d1117;
   border-bottom: 1px solid #222;
 }
 
@@ -27,11 +27,13 @@ nav a {
   text-decoration: none;
 }
 
+/* BUTTON LINK STYLE */
 .btn {
   background: #238636;
   padding: 10px 15px;
   border-radius: 6px;
   color: white;
+  text-decoration: none;
 }
 
 /* HERO */
@@ -61,13 +63,14 @@ nav a {
 }
 
 /* BUTTON */
-button {
+.main-btn {
+  display: inline-block;
   padding: 12px 20px;
   background: #238636;
-  border: none;
   color: white;
   border-radius: 6px;
-  cursor: pointer;
+  text-decoration: none;
+  margin-top: 10px;
 }
 
 /* SECTION */
@@ -150,9 +153,7 @@ footer a {
     </p>
 
     <!-- FIXED BUTTON -->
-    <a href="chat.html">
-      <button>Start Free Trial</button>
-    </a>
+    <a href="chat.html" class="main-btn">Start Free Trial</a>
 
   </div>
 
