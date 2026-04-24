@@ -1,91 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>AI Chat - Step 1</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0d1117;
-  color: white;
-}
-
-/* CHAT BOX */
-.chat-box {
-  height: 80vh;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-/* MESSAGES */
-.message {
-  margin: 10px 0;
-  padding: 10px 15px;
-  border-radius: 10px;
-  max-width: 70%;
-}
-
-.user {
-  background: #238636;
-  margin-left: auto;
-}
-
-.ai {
-  background: #161b22;
-}
-
-/* INPUT */
-.input-box {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid #333;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  outline: none;
-}
-
-button {
-  padding: 10px 15px;
-  background: #238636;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-</style>
-</head>
-
-<body>
-
-<div class="chat-box" id="chat">
-  <div class="message ai">
-    Hey 👋 I am your friend.  
-    Tell me your introduction 😊
-  </div>
-</div>
-
-<div class="input-box">
-  <input id="input" placeholder="Type here..." />
-  <button onclick="send()">Send</button>
-</div>
-
-<!-- ✅ IMPORTANT: SCRIPT MUST BE HERE -->
 <script>
-  <script>
-document.getElementById("input").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") {
-    send();
-  }
-});
-</script>
+
+// ENTER KEY FIX
+window.onload = function() {
+  document.getElementById("input").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      send();
+    }
+  });
+};
+
+// STEP SYSTEM (SMART FLOW)
+let step = 1;
+
 function send() {
   let input = document.getElementById("input");
-  let text = input.value.toLowerCase();
+  let text = input.value.trim();
 
   if(text === "") return;
 
@@ -97,31 +26,33 @@ function send() {
 
   let reply = "";
 
-  if(text.includes("hi") || text.includes("hello")) {
-    reply = "Hey 😊 Tell me your name.";
-  }
-  else if(text.includes("name")) {
-    reply = "Nice! What do you do?";
-  }
-  else if(text.includes("student") || text.includes("work")) {
-    reply = "Great 👍 What are your interests?";
-  }
-  else if(text.includes("interest")) {
-    reply = "Awesome 🔥 You're doing great. Try speaking confidently!";
-  }
-  else if(text.includes("bad") || text.includes("abuse")) {
-    reply = "Hey 😅 let's keep it respectful.";
+  // FILTER BAD WORDS
+  if(text.toLowerCase().includes("bad") || text.toLowerCase().includes("abuse")) {
+    reply = "😅 Bro chill... let's keep it respectful.";
   }
   else {
-    reply = "Good 👍 Try giving full introduction: Name, work, interest.";
+    // STEP FLOW
+    if(step === 1) {
+      reply = `Nice to meet you, ${text} 😊<br>What do you do?`;
+      step = 2;
+    }
+    else if(step === 2) {
+      reply = "Good 👍 Now tell me your interests or hobbies.";
+      step = 3;
+    }
+    else if(step === 3) {
+      reply = "🔥 Perfect! Example:<br>Hi, I am Rohan. I am a student and I like football.";
+      step = 4;
+    }
+    else {
+      reply = "Keep practicing 💪";
+    }
   }
 
   setTimeout(() => {
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
-  }, 800);
+  }, 600);
 }
-</script>
 
-</body>
-</html>
+</script>
