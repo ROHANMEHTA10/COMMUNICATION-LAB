@@ -7,63 +7,206 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: 'Segoe UI', sans-serif;
   background: #0d1117;
-  color: white;
+  color: #e6edf3;
 }
 
+/* NAVBAR */
 nav {
   display: flex;
   justify-content: space-between;
-  padding: 20px 40px;
+  padding: 20px 60px;
+  background: #0d1117;
+  border-bottom: 1px solid #222;
 }
 
 nav a {
-  color: white;
+  color: #e6edf3;
   margin: 0 10px;
   text-decoration: none;
 }
 
-.hero {
-  text-align: center;
-  padding: 80px 20px;
+.btn {
+  background: #238636;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: white;
 }
 
+/* HERO */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 100px 60px;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  max-width: 500px;
+}
+
+.hero-text h1 {
+  font-size: 42px;
+}
+
+.hero-text p {
+  color: #8b949e;
+}
+
+.hero img {
+  width: 350px;
+  border-radius: 12px;
+}
+
+/* BUTTON */
 button {
   padding: 12px 20px;
-  background: green;
+  background: #238636;
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
+/* SECTION */
 .section {
-  padding: 50px;
+  padding: 80px 60px;
   text-align: center;
+}
+
+/* CARDS */
+.cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #161b22;
+  margin: 10px;
+  padding: 20px;
+  width: 180px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* AI SECTION */
+.ai-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.ai-section img {
+  width: 320px;
+  border-radius: 12px;
+}
+
+/* FOOTER */
+footer {
+  background: #010409;
+  padding: 40px;
+  text-align: center;
+  color: #8b949e;
+}
+
+footer a {
+  color: #58a6ff;
+  text-decoration: none;
 }
 </style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 <nav>
   <div><b>AI Communication Lab</b></div>
+  <div>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Training</a>
+    <a href="#">Contact</a>
+    <a href="#">Portfolio</a>
+    <a class="btn" href="#">Start Training</a>
+  </div>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
-  <h1>MASTER THE ART OF CONVERSATION</h1>
-  <p>Build confidence step by step</p>
 
-  <a href="lesson1.html">
-    <button>Start Free Trial</button>
-  </a>
+  <div class="hero-text">
+    <h1>MASTER THE ART OF CONVERSATION</h1>
+    <p>
+      SpeakEase AI Lab is a Silicon Valley innovation center dedicated to introverted students. We help you build confidence through daily challenges and AI-driven training.
+    </p>
+    <button onclick="alert('Free Trial Started')">Start Free Trial</button>
+  </div>
+
+  <img src="https://www.ai-scaleup.com/wp-content/uploads/2024/02/ai-communication-skills-for-business.jpg">
+
 </div>
 
+<!-- 7 DAY -->
 <div class="section">
-  <h2>7 Day Challenge</h2>
-  <p>Start from Step 1 and improve daily</p>
+  <h2>7-Day Challenge</h2>
+
+  <div class="cards">
+    <div class="card">01<br>Self Intro</div>
+    <div class="card">02<br>Active Listen</div>
+    <div class="card">03<br>Open Questions</div>
+    <div class="card">04<br>Eye Contact</div>
+    <div class="card">05<br>Small Talk</div>
+    <div class="card">06<br>Group Entry</div>
+    <div class="card">07<br>Final Pitch</div>
+  </div>
 </div>
+
+<!-- AI CRUSH -->
+<div class="section ai-section">
+
+  <div>
+    <h2>COMING SOON</h2>
+    <h1>AI CRUSH CHAT 💬</h1>
+    <p style="color:#8b949e;">
+      The ultimate safety net for your social milestones. Practice conversations, handle emotions, and build confidence before real-life interactions.
+    </p>
+  </div>
+
+  <img src="https://technewtime.com/wp-content/uploads/2025/07/What-is-crush-on-AI-1-1024x1024.jpeg">
+
+</div>
+
+<!-- ABOUT -->
+<div class="section">
+  <h2>Empowering the Quiet Potential Within You</h2>
+  <p style="max-width:700px; margin:auto; color:#8b949e;">
+    AI Communication Lab is a research-based environment designed for introverts. We combine AI simulation with step-by-step training to help you build real confidence.
+  </p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <h3>AI Communication Lab</h3>
+  <p>Silicon Valley</p>
+  <p>Email: hello@speakease.lab</p>
+
+  <p>
+    <a href="#">Instagram</a> |
+    <a href="#">YouTube</a> |
+    <a href="#">LinkedIn</a>
+  </p>
+
+  <p>© 2026 Your Name</p>
+</footer>
 
 </body>
 </html>
