@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Training Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0d1117;
+  color: white;
+}
+
+.chat-box {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.ai {
+  background: #161b22;
+}
+
+.user {
+  background: #238636;
+  margin-left: auto;
+}
+
+input {
+  width: 70%;
+  padding: 10px;
+}
+
+button {
+  padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-box" id="chat">
+
+<div class="message ai">
+👋 Hey! I’m your AI friend. Think of me as your partner 😊  
+Let’s start Step 1 — Self Introduction.  
+Tell me your name, what you do, and your interest.
+</div>
+
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+<input id="input" placeholder="Type your answer...">
+<button onclick="send()">Send</button>
+</div>
+
+<script>
+function send() {
+  let input = document.getElementById("input");
+  let text = input.value;
+
+  if(text === "") return;
+
+  let chat = document.getElementById("chat");
+
+  // User message
+  chat.innerHTML += `<div class="message user">${text}</div>`;
+
+  input.value = "";
+
+  // AI reply
+  setTimeout(() => {
+    chat.innerHTML += `<div class="message ai">
+Great! 👍 That’s a good intro.  
+Try to speak it clearly with confidence.  
+Practice again for 30 seconds.
+</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
