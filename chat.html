@@ -1,51 +1,120 @@
-let step = 1;
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Chat - Step 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0d1117;
+  color: white;
+}
+
+/* CHAT BOX */
+.chat-box {
+  height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* MESSAGES */
+.message {
+  margin: 10px 0;
+  padding: 10px 15px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.user {
+  background: #238636;
+  margin-left: auto;
+}
+
+.ai {
+  background: #161b22;
+}
+
+/* INPUT */
+.input-box {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #333;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+}
+
+button {
+  padding: 10px 15px;
+  background: #238636;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-box" id="chat">
+  <div class="message ai">
+    Hey 👋 I am your friend.  
+    Tell me your introduction 😊
+  </div>
+</div>
+
+<div class="input-box">
+  <input id="input" placeholder="Type here..." />
+  <button onclick="send()">Send</button>
+</div>
+
+<!-- ✅ IMPORTANT: SCRIPT MUST BE HERE -->
+<script>
 function send() {
   let input = document.getElementById("input");
-  let text = input.value;
+  let text = input.value.toLowerCase();
 
-  if (text === "") return;
+  if(text === "") return;
 
   let chat = document.getElementById("chat");
 
-  // show user message
+  // user message
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
   let reply = "";
 
-  // ❌ basic bad words filter (simple)
-  if (text.toLowerCase().includes("abuse") || text.toLowerCase().includes("bad")) {
-    reply = "Hey 😅 let's keep it respectful. We are here to improve communication.";
+  if(text.includes("hi") || text.includes("hello")) {
+    reply = "Hey 😊 Tell me your name.";
   }
-
-  else if (step === 1) {
-    reply = "Nice to meet you 😊 What do you do? (student / job / etc.)";
-    step = 2;
+  else if(text.includes("name")) {
+    reply = "Nice! What do you do?";
   }
-
-  else if (step === 2) {
-    reply = "Great 👍 Now tell me your interest or hobby.";
-    step = 3;
+  else if(text.includes("student") || text.includes("work")) {
+    reply = "Great 👍 What are your interests?";
   }
-
-  else if (step === 3) {
-    reply = "Awesome 🎉 Now combine everything and say your full introduction.";
-    step = 4;
+  else if(text.includes("interest")) {
+    reply = "Awesome 🔥 You're doing great. Try speaking confidently!";
   }
-
-  else if (step === 4) {
-    reply = "🔥 That’s a solid intro! Practice it 2–3 times confidently. You completed Step 1!";
-    step = 5;
+  else if(text.includes("bad") || text.includes("abuse")) {
+    reply = "Hey 😅 let's keep it respectful.";
   }
-
   else {
-    reply = "You already completed this step ✅ Go to next lesson soon.";
+    reply = "Good 👍 Try giving full introduction: Name, work, interest.";
   }
 
-  // AI reply
   setTimeout(() => {
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
   }, 800);
 }
+</script>
+
+</body>
+</html>
