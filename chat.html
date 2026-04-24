@@ -1,30 +1,51 @@
+let step = 1;
+
 function send() {
   let input = document.getElementById("input");
-  let text = input.value.toLowerCase();
+  let text = input.value;
 
-  if(text === "") return;
+  if (text === "") return;
 
   let chat = document.getElementById("chat");
 
+  // show user message
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
   let reply = "";
 
-  if(text.includes("hi") || text.includes("hello")) {
-    reply = "Hey! 😊 Tell me your introduction.";
-  }
-  else if(text.includes("name")) {
-    reply = "Nice! Now tell me what you do.";
-  }
-  else if(text.includes("bad") || text.includes("abuse")) {
-    reply = "Hey 😅 let's keep it respectful. Focus on learning.";
-  }
-  else {
-    reply = "Good try 👍 Speak clearly and confidently. Try again.";
+  // ❌ basic bad words filter (simple)
+  if (text.toLowerCase().includes("abuse") || text.toLowerCase().includes("bad")) {
+    reply = "Hey 😅 let's keep it respectful. We are here to improve communication.";
   }
 
+  else if (step === 1) {
+    reply = "Nice to meet you 😊 What do you do? (student / job / etc.)";
+    step = 2;
+  }
+
+  else if (step === 2) {
+    reply = "Great 👍 Now tell me your interest or hobby.";
+    step = 3;
+  }
+
+  else if (step === 3) {
+    reply = "Awesome 🎉 Now combine everything and say your full introduction.";
+    step = 4;
+  }
+
+  else if (step === 4) {
+    reply = "🔥 That’s a solid intro! Practice it 2–3 times confidently. You completed Step 1!";
+    step = 5;
+  }
+
+  else {
+    reply = "You already completed this step ✅ Go to next lesson soon.";
+  }
+
+  // AI reply
   setTimeout(() => {
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
-  }, 1000);
+    chat.scrollTop = chat.scrollHeight;
+  }, 800);
 }
