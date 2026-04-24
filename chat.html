@@ -73,13 +73,12 @@ button {
   cursor: pointer;
 }
 
-/* TYPING ANIMATION */
+/* TYPING */
 .typing {
+  opacity: 0.6;
   font-style: italic;
-  opacity: 0.7;
 }
 
-/* ANIMATION */
 @keyframes fadeIn {
   from {opacity: 0; transform: translateY(10px);}
   to {opacity: 1; transform: translateY(0);}
@@ -105,6 +104,7 @@ button {
 
 <script>
 let step = 1;
+let userName = "";
 
 function send() {
   let input = document.getElementById("input");
@@ -114,40 +114,48 @@ function send() {
 
   let chat = document.getElementById("chat");
 
-  // user message
+  // USER MESSAGE
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
-  // typing effect
-  let typingDiv = document.createElement("div");
-  typingDiv.className = "message ai typing";
-  typingDiv.innerText = "Typing...";
-  chat.appendChild(typingDiv);
+  // TYPING
+  let typing = document.createElement("div");
+  typing.className = "message ai typing";
+  typing.innerText = "Typing...";
+  chat.appendChild(typing);
 
   chat.scrollTop = chat.scrollHeight;
 
   setTimeout(() => {
-    typingDiv.remove();
+    typing.remove();
 
     let reply = "";
+    let lower = text.toLowerCase();
 
-    if (text.toLowerCase().includes("bad") || text.toLowerCase().includes("abuse")) {
-      reply = "😅 Bro chill… let’s keep it respectful.";
+    // BASIC SAFETY (no dumb agreeing)
+    if (lower.includes("abuse") || lower.includes("bad") || lower.includes("stupid")) {
+      reply = "😅 Chill bro… let's keep it respectful and focus on improving.";
     }
 
     else {
       if (step === 1) {
-        reply = `Nice to meet you, ${text} 😊<br>What do you do?`;
+        userName = text;
+        reply = `Nice to meet you, ${userName} 😊<br>What do you do? (student/job/etc)`;
         step = 2;
       }
+
       else if (step === 2) {
-        reply = "Good 👍 Tell me your interests or hobbies.";
+        reply = "Good 👍 Now tell me your interests (like football, music, gym, etc)";
         step = 3;
       }
+
       else if (step === 3) {
-        reply = "🔥 Perfect! Example:<br>Hi, I am " + text + ". I am a student and I like football.";
+        reply = `🔥 Perfect! Here is your introduction:<br><br>
+        Hi, I am ${userName}. I am ${text}. I enjoy learning new things.<br><br>
+        Say it confidently 💪`;
         step = 4;
       }
+
       else {
         reply = "Keep practicing 💪 You are improving!";
       }
@@ -156,17 +164,16 @@ function send() {
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  }, 1000);
+  }, 800);
 }
 
-// ENTER KEY SEND
-window.onload = function() {
-  document.getElementById("input").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      send();
-    }
-  });
-};
+/* ENTER KEY FIX (IMPORTANT) */
+document.getElementById("input").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault(); // prevent page bug
+    send();
+  }
+});
 </script>
 
 </body>
