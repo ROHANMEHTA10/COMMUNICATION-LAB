@@ -76,6 +76,13 @@ button {
 
 <!-- ✅ IMPORTANT: SCRIPT MUST BE HERE -->
 <script>
+  <script>
+document.getElementById("input").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    send();
+  }
+});
+</script>
 function send() {
   let input = document.getElementById("input");
   let text = input.value.toLowerCase();
