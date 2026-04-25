@@ -95,18 +95,26 @@ function cleanText(text) {
   return text.toLowerCase().replace(/[^a-z ]/g, "").trim();
 }
 
+// 🧠 BETTER NAME EXTRACTION
 function extractName(text) {
   let t = text.toLowerCase();
 
   if (t.includes("my name is")) {
-    return text.split("my name is")[1].trim().split(" ")[0];
+    return text.toLowerCase().split("my name is")[1].trim().split(" ")[0];
   }
 
   if (t.includes("i am")) {
-    return text.split("i am")[1].trim().split(" ")[0];
+    let name = text.toLowerCase().split("i am")[1].trim().split(" ")[0];
+    if (name === "a" || name === "an") return ""; // prevent "i am a student"
+    return name;
   }
 
-  return text.split(" ")[0];
+  let first = text.split(" ")[0].toLowerCase();
+
+  // ❌ avoid wrong names
+  if (["my", "i", "am"].includes(first)) return "";
+
+  return first;
 }
 
 function send() {
@@ -135,29 +143,35 @@ function send() {
 
     // 🚫 BAD LANGUAGE
     if (lower.includes("fuck") || lower.includes("abuse")) {
-      reply = "😅 Keep it respectful bro.";
+      reply = "😅 Chill bro, keep it respectful.";
     }
 
     // 🧠 STEP 1: NAME
     else if (!userName) {
-      userName = extractName(text);
-      reply = `Nice to meet you ${userName} 😊 What do you do?`;
+      let name = extractName(text);
+
+      if (!name) {
+        reply = "😄 I didn’t catch your name properly. Try like: 'My name is Rohan'";
+      } else {
+        userName = name;
+        reply = `Nice to meet you ${userName} 😊 What do you do?`;
+      }
     }
 
     // 🧠 STEP 2: WORK
     else if (!userWork) {
       if (lower === userName.toLowerCase()) {
-        reply = "😅 That’s your name again. Tell me your work.";
+        reply = "😅 That's your name again. Tell me what you do.";
       } else {
         userWork = text;
-        reply = `Good 👍 What are your interests?`;
+        reply = `Nice 👍 And what are your interests?`;
       }
     }
 
     // 🧠 STEP 3: INTEREST
     else if (!userInterest) {
       if (lower === userName.toLowerCase()) {
-        reply = "😅 That’s not an interest. Tell me what you like.";
+        reply = "😅 That’s not an interest. Tell me what you enjoy.";
       } else {
         userInterest = text;
         introDone = true;
@@ -166,34 +180,49 @@ function send() {
 🔥 Your final intro:<br><br>
 Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
 
-✅ Great job!<br>
-Type <b>again</b> to practice<br>
-Type <b>next</b> for next lesson 🚀
+✅ Good job!<br>
+You can now chat freely 😄
         `;
       }
     }
 
-    // 🎯 AFTER INTRO COMPLETE
+    // 💬 SMART CHAT MODE (IMPORTANT)
     else if (introDone) {
 
-      if (lower.includes("again")) {
-        userWork = "";
-        userInterest = "";
-        introDone = false;
-
-        reply = "🔁 Let's try again! What do you do?";
+      if (lower.includes("hi") || lower.includes("hello")) {
+        reply = `Hey ${userName} 👋 what's up?`;
       }
 
-      else if (lower.includes("next")) {
-        reply = "🚀 Moving to next lesson: Active Listening (coming soon)";
+      else if (lower.includes("how are you")) {
+        reply = "I'm good 😄 What about you?";
       }
 
-      else if (text.length > 20) {
-        reply = "🔥 Nice full sentence! Your confidence is improving 💪";
+      else if (lower.includes("nervous")) {
+        reply = "Totally normal bro 💪 Even confident people feel nervous sometimes.";
+      }
+
+      else if (lower.includes("confidence")) {
+        reply = "Confidence = practice + consistency 🔥 Speak daily and it will grow.";
+      }
+
+      else if (lower.includes("crush")) {
+        reply = "😏 Oho... want help talking to your crush?";
+      }
+
+      else if (text.length > 25) {
+        reply = "🔥 That was a solid sentence! You're improving.";
       }
 
       else {
-        reply = "👍 Try speaking full introduction again or type 'next'";
+        const replies = [
+          `Nice 👍 ${userName}, tell me more.`,
+          `Hmm interesting 😄`,
+          `Good one 💪`,
+          `Haha okay 😂`,
+          `You're getting better bro 🔥`
+        ];
+
+        reply = replies[Math.floor(Math.random() * replies.length)];
       }
     }
 
