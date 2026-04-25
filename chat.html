@@ -1,3 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0d1117;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  padding: 15px;
+  background: #161b22;
+  text-align: center;
+  font-weight: bold;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.user {
+  background: #238636;
+  margin-left: auto;
+}
+
+.ai {
+  background: #161b22;
+}
+
+.input-box {
+  display: flex;
+  padding: 10px;
+  background: #161b22;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  outline: none;
+}
+
+button {
+  padding: 12px;
+  background: #238636;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.typing {
+  opacity: 0.6;
+  font-style: italic;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">AI Trainer 🤖</div>
+
+<div class="chat-box" id="chat">
+  <div class="message ai">Hey 👋 Tell me your name</div>
+</div>
+
+<div class="input-box">
+  <input id="input" placeholder="Type..." />
+  <button onclick="send()">Send</button>
+</div>
+
 <script>
 let userName = "";
 let userWork = "";
@@ -8,15 +95,13 @@ function send() {
   let text = input.value.trim();
   let lower = text.toLowerCase();
 
-  if (text === "") return;
+  if (!text) return;
 
   let chat = document.getElementById("chat");
 
-  // USER MESSAGE
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
-  // TYPING
   let typing = document.createElement("div");
   typing.className = "message ai typing";
   typing.innerText = "Typing...";
@@ -29,57 +114,35 @@ function send() {
 
     let reply = "";
 
-    // 🚫 Safety filter
-    if (lower.includes("abuse") || lower.includes("stupid") || lower.includes("idiot")) {
-      reply = "😅 Bro chill… let's keep it respectful.";
+    if (lower.includes("abuse") || lower.includes("stupid")) {
+      reply = "😅 Be respectful bro.";
     }
 
-    // 🧠 SMART NAME DETECTION
     else if (!userName) {
       userName = text.split(" ")[0];
-      reply = `Nice to meet you, ${userName} 😊<br>What do you do?`;
+      reply = `Nice to meet you ${userName} 😊 What do you do?`;
     }
 
-    // 💼 WORK DETECTION
-    else if (!userWork && !lower.includes(userName.toLowerCase())) {
+    else if (!userWork) {
       userWork = text;
-      reply = `Got it 👍 So ${userName}, what do you enjoy doing? (hobbies/interests)`;
+      reply = `Good 👍 What are your interests?`;
     }
 
-    // 🎯 INTEREST DETECTION
     else if (!userInterest) {
       userInterest = text;
-
-      reply = `
-      🔥 Your final introduction:<br><br>
-      Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
-      Say it confidently 💪
-      `;
+      reply = `🔥 Intro:<br>Hi I am ${userName}, I am ${userWork}, I like ${userInterest}`;
     }
 
-    // 💬 SMART NORMAL CHAT
     else {
-      if (lower.includes("nervous")) {
-        reply = "It's normal 😄 Everyone feels nervous. Practice daily and you'll improve.";
-      }
-      else if (lower.includes("how")) {
-        reply = "Start simple 👍 Speak slowly, smile, and maintain eye contact.";
-      }
-      else if (lower.includes("intro")) {
-        reply = `Try this:<br>Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.`;
-      }
-      else {
-        reply = `Nice 👍 ${userName}, you're improving. Keep practicing daily 💪`;
-      }
+      reply = `Nice 👍 ${userName}, keep practicing`;
     }
 
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  }, 700);
+  }, 600);
 }
 
-// ENTER KEY FIX
 document.getElementById("input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -87,3 +150,6 @@ document.getElementById("input").addEventListener("keydown", function(e) {
   }
 });
 </script>
+
+</body>
+</html>
