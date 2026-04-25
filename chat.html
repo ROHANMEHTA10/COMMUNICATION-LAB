@@ -90,14 +90,18 @@ let userName = "";
 let userWork = "";
 let userInterest = "";
 
-function extractName(text) {
-  let lower = text.toLowerCase();
+function cleanText(text) {
+  return text.toLowerCase().replace(/[^a-z ]/g, "").trim();
+}
 
-  if (lower.includes("my name is")) {
+function extractName(text) {
+  let t = text.toLowerCase();
+
+  if (t.includes("my name is")) {
     return text.split("my name is")[1].trim().split(" ")[0];
   }
 
-  if (lower.includes("i am")) {
+  if (t.includes("i am")) {
     return text.split("i am")[1].trim().split(" ")[0];
   }
 
@@ -107,7 +111,7 @@ function extractName(text) {
 function send() {
   let input = document.getElementById("input");
   let text = input.value.trim();
-  let lower = text.toLowerCase();
+  let lower = cleanText(text);
 
   if (!text) return;
 
@@ -130,47 +134,52 @@ function send() {
 
     let reply = "";
 
-    // 🚫 BAD LANGUAGE FILTER
-    if (lower.includes("abuse") || lower.includes("stupid") || lower.includes("idiot")) {
-      reply = "😅 Chill bro… keep it respectful.";
+    // 🚫 BAD WORD FILTER
+    if (lower.includes("fuck") || lower.includes("abuse") || lower.includes("stupid")) {
+      reply = "😅 Bro… keep it clean. Let’s focus on learning.";
     }
 
-    // 🧠 NAME DETECTION
+    // 🧠 NAME
     else if (!userName) {
       userName = extractName(text);
-      reply = `Nice to meet you ${userName} 😊 What do you do?`;
+      reply = `Nice to meet you ${userName} 😊 What do you do? (student/job)`;
     }
 
-    // 💼 WORK
+    // 💼 WORK VALIDATION
     else if (!userWork) {
-      userWork = text;
-      reply = `Good 👍 ${userName}, what are your interests?`;
+      if (lower === userName.toLowerCase()) {
+        reply = "😅 That looks like your name again. Tell me your work (student / job / etc)";
+      } else {
+        userWork = text;
+        reply = `Good 👍 What are your interests? (football, music, gym etc)`;
+      }
     }
 
-    // 🎯 INTEREST
+    // 🎯 INTEREST VALIDATION
     else if (!userInterest) {
-      userInterest = text;
+      if (lower === userName.toLowerCase() || lower === userWork.toLowerCase()) {
+        reply = "😅 That doesn't look like an interest. Tell me something you enjoy.";
+      } else {
+        userInterest = text;
 
-      reply = `
-🔥 Your intro:<br><br>
+        reply = `
+🔥 Your final intro:<br><br>
 Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
 Say it confidently 💪
-`;
+        `;
+      }
     }
 
-    // 🧠 SMART CHAT AFTER INTRO
+    // 🧠 SMART CHAT
     else {
       if (lower.includes("what") || lower.includes("why")) {
-        reply = "I am helping you improve communication 😄 Let's practice your intro again!";
+        reply = "I am helping you practice communication 😄 Stay on track.";
       }
       else if (lower.includes("again")) {
-        reply = `Try this:<br>Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.`;
-      }
-      else if (lower.includes("name")) {
-        reply = `Your name is ${userName} 😉`;
+        reply = `Repeat this:<br>Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.`;
       }
       else {
-        reply = `Got it 👍 But stay on track ${userName}. Let's improve your speaking skill.`;
+        reply = `Nice 👍 ${userName}, try speaking your intro again confidently.`;
       }
     }
 
