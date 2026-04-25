@@ -90,6 +90,20 @@ let userName = "";
 let userWork = "";
 let userInterest = "";
 
+function extractName(text) {
+  let lower = text.toLowerCase();
+
+  if (lower.includes("my name is")) {
+    return text.split("my name is")[1].trim().split(" ")[0];
+  }
+
+  if (lower.includes("i am")) {
+    return text.split("i am")[1].trim().split(" ")[0];
+  }
+
+  return text.split(" ")[0];
+}
+
 function send() {
   let input = document.getElementById("input");
   let text = input.value.trim();
@@ -99,9 +113,11 @@ function send() {
 
   let chat = document.getElementById("chat");
 
+  // USER MESSAGE
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
+  // TYPING
   let typing = document.createElement("div");
   typing.className = "message ai typing";
   typing.innerText = "Typing...";
@@ -114,35 +130,57 @@ function send() {
 
     let reply = "";
 
-    if (lower.includes("abuse") || lower.includes("stupid")) {
-      reply = "😅 Be respectful bro.";
+    // 🚫 BAD LANGUAGE FILTER
+    if (lower.includes("abuse") || lower.includes("stupid") || lower.includes("idiot")) {
+      reply = "😅 Chill bro… keep it respectful.";
     }
 
+    // 🧠 NAME DETECTION
     else if (!userName) {
-      userName = text.split(" ")[0];
+      userName = extractName(text);
       reply = `Nice to meet you ${userName} 😊 What do you do?`;
     }
 
+    // 💼 WORK
     else if (!userWork) {
       userWork = text;
-      reply = `Good 👍 What are your interests?`;
+      reply = `Good 👍 ${userName}, what are your interests?`;
     }
 
+    // 🎯 INTEREST
     else if (!userInterest) {
       userInterest = text;
-      reply = `🔥 Intro:<br>Hi I am ${userName}, I am ${userWork}, I like ${userInterest}`;
+
+      reply = `
+🔥 Your intro:<br><br>
+Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
+Say it confidently 💪
+`;
     }
 
+    // 🧠 SMART CHAT AFTER INTRO
     else {
-      reply = `Nice 👍 ${userName}, keep practicing`;
+      if (lower.includes("what") || lower.includes("why")) {
+        reply = "I am helping you improve communication 😄 Let's practice your intro again!";
+      }
+      else if (lower.includes("again")) {
+        reply = `Try this:<br>Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.`;
+      }
+      else if (lower.includes("name")) {
+        reply = `Your name is ${userName} 😉`;
+      }
+      else {
+        reply = `Got it 👍 But stay on track ${userName}. Let's improve your speaking skill.`;
+      }
     }
 
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  }, 600);
+  }, 700);
 }
 
+// ENTER KEY FIX
 document.getElementById("input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
