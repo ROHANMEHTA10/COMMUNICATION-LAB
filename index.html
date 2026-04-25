@@ -19,21 +19,34 @@ nav {
   align-items: center;
   padding: 20px 60px;
   border-bottom: 1px solid #222;
+  position: sticky;
+  top: 0;
+  background: #0d1117;
 }
 
 nav a {
   color: #e6edf3;
   margin: 0 10px;
   text-decoration: none;
+  transition: 0.3s;
 }
 
-/* BUTTON LINK STYLE */
-.btn {
+nav a:hover {
+  color: #58a6ff;
+}
+
+/* BUTTON */
+.btn, .main-btn {
   background: #238636;
-  padding: 10px 15px;
+  padding: 10px 16px;
   border-radius: 6px;
   color: white;
   text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn:hover, .main-btn:hover {
+  background: #2ea043;
 }
 
 /* HERO */
@@ -62,20 +75,9 @@ nav a {
   border-radius: 12px;
 }
 
-/* BUTTON */
-.main-btn {
-  display: inline-block;
-  padding: 12px 20px;
-  background: #238636;
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  margin-top: 10px;
-}
-
 /* SECTION */
 .section {
-  padding: 80px 60px;
+  padding: 80px 40px;
   text-align: center;
 }
 
@@ -96,7 +98,8 @@ nav a {
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  background: #1f2937;
 }
 
 /* AI SECTION */
@@ -135,9 +138,9 @@ footer a {
   <div><b>AI Communication Lab</b></div>
   <div>
     <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Training</a>
-    <a href="#">Contact</a>
+    <a href="#about">About</a>
+    <a href="#training">Training</a>
+    <a href="#contact">Contact</a>
     <a href="#">Portfolio</a>
     <a class="btn" href="chat.html">Start Training</a>
   </div>
@@ -152,9 +155,7 @@ footer a {
       SpeakEase AI Lab helps introverts build confidence through daily challenges and AI training.
     </p>
 
-    <!-- FIXED BUTTON -->
     <a href="chat.html" class="main-btn">Start Free Trial</a>
-
   </div>
 
   <img src="https://www.ai-scaleup.com/wp-content/uploads/2024/02/ai-communication-skills-for-business.jpg">
@@ -162,7 +163,7 @@ footer a {
 </div>
 
 <!-- 7 DAY -->
-<div class="section">
+<div class="section" id="training">
   <h2>7-Day Challenge</h2>
 
   <div class="cards">
@@ -192,18 +193,23 @@ footer a {
 </div>
 
 <!-- ABOUT -->
-<div class="section">
+<div class="section" id="about">
   <h2>Empowering the Quiet Potential Within You</h2>
   <p style="max-width:700px; margin:auto; color:#8b949e;">
-    AI Communication Lab helps introverts improve communication step-by-step.
+    AI Communication Lab helps introverts improve communication step-by-step using AI-based practice.
   </p>
+</div>
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+  <h2>Contact</h2>
+  <p>Email: hello@speakease.lab</p>
 </div>
 
 <!-- FOOTER -->
 <footer>
   <h3>AI Communication Lab</h3>
   <p>Silicon Valley</p>
-  <p>Email: hello@speakease.lab</p>
 
   <p>
     <a href="#">Instagram</a> |
