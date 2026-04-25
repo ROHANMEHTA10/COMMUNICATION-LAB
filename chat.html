@@ -89,6 +89,7 @@ button {
 let userName = "";
 let userWork = "";
 let userInterest = "";
+let introDone = false;
 
 function cleanText(text) {
   return text.toLowerCase().replace(/[^a-z ]/g, "").trim();
@@ -117,11 +118,9 @@ function send() {
 
   let chat = document.getElementById("chat");
 
-  // USER MESSAGE
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
-  // TYPING
   let typing = document.createElement("div");
   typing.className = "message ai typing";
   typing.innerText = "Typing...";
@@ -134,62 +133,77 @@ function send() {
 
     let reply = "";
 
-    // 🚫 BAD WORD FILTER
-    if (lower.includes("fuck") || lower.includes("abuse") || lower.includes("stupid")) {
-      reply = "😅 Bro… keep it clean. Let’s focus on learning.";
+    // 🚫 BAD LANGUAGE
+    if (lower.includes("fuck") || lower.includes("abuse")) {
+      reply = "😅 Keep it respectful bro.";
     }
 
-    // 🧠 NAME
+    // 🧠 STEP 1: NAME
     else if (!userName) {
       userName = extractName(text);
-      reply = `Nice to meet you ${userName} 😊 What do you do? (student/job)`;
+      reply = `Nice to meet you ${userName} 😊 What do you do?`;
     }
 
-    // 💼 WORK VALIDATION
+    // 🧠 STEP 2: WORK
     else if (!userWork) {
       if (lower === userName.toLowerCase()) {
-        reply = "😅 That looks like your name again. Tell me your work (student / job / etc)";
+        reply = "😅 That’s your name again. Tell me your work.";
       } else {
         userWork = text;
-        reply = `Good 👍 What are your interests? (football, music, gym etc)`;
+        reply = `Good 👍 What are your interests?`;
       }
     }
 
-    // 🎯 INTEREST VALIDATION
+    // 🧠 STEP 3: INTEREST
     else if (!userInterest) {
-      if (lower === userName.toLowerCase() || lower === userWork.toLowerCase()) {
-        reply = "😅 That doesn't look like an interest. Tell me something you enjoy.";
+      if (lower === userName.toLowerCase()) {
+        reply = "😅 That’s not an interest. Tell me what you like.";
       } else {
         userInterest = text;
+        introDone = true;
 
         reply = `
 🔥 Your final intro:<br><br>
 Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
-Say it confidently 💪
+
+✅ Great job!<br>
+Type <b>again</b> to practice<br>
+Type <b>next</b> for next lesson 🚀
         `;
       }
     }
 
-    // 🧠 SMART CHAT
-    else {
-      if (lower.includes("what") || lower.includes("why")) {
-        reply = "I am helping you practice communication 😄 Stay on track.";
+    // 🎯 AFTER INTRO COMPLETE
+    else if (introDone) {
+
+      if (lower.includes("again")) {
+        userWork = "";
+        userInterest = "";
+        introDone = false;
+
+        reply = "🔁 Let's try again! What do you do?";
       }
-      else if (lower.includes("again")) {
-        reply = `Repeat this:<br>Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.`;
+
+      else if (lower.includes("next")) {
+        reply = "🚀 Moving to next lesson: Active Listening (coming soon)";
       }
+
+      else if (text.length > 20) {
+        reply = "🔥 Nice full sentence! Your confidence is improving 💪";
+      }
+
       else {
-        reply = `Nice 👍 ${userName}, try speaking your intro again confidently.`;
+        reply = "👍 Try speaking full introduction again or type 'next'";
       }
     }
 
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  }, 700);
+  }, 600);
 }
 
-// ENTER KEY FIX
+// ENTER KEY
 document.getElementById("input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -197,6 +211,5 @@ document.getElementById("input").addEventListener("keydown", function(e) {
   }
 });
 </script>
-
 </body>
 </html>
