@@ -1,114 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>AI Chat - Step 1</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #0d1117;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-/* HEADER */
-.header {
-  padding: 15px;
-  background: #161b22;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* CHAT AREA */
-.chat-box {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-/* MESSAGE STYLE */
-.message {
-  padding: 12px 16px;
-  margin: 10px 0;
-  border-radius: 15px;
-  max-width: 70%;
-  animation: fadeIn 0.3s ease;
-}
-
-.user {
-  background: #238636;
-  margin-left: auto;
-}
-
-.ai {
-  background: #161b22;
-}
-
-/* INPUT AREA */
-.input-box {
-  display: flex;
-  padding: 10px;
-  background: #161b22;
-}
-
-input {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  outline: none;
-  border-radius: 10px;
-}
-
-button {
-  margin-left: 10px;
-  padding: 12px 18px;
-  background: #238636;
-  border: none;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* TYPING */
-.typing {
-  opacity: 0.6;
-  font-style: italic;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">AI Communication Trainer 🤖</div>
-
-<div class="chat-box" id="chat">
-  <div class="message ai">
-    Hey 👋 I am your friend.<br>
-    Tell me your name 😊
-  </div>
-</div>
-
-<div class="input-box">
-  <input id="input" placeholder="Type your message..." />
-  <button onclick="send()">Send</button>
-</div>
-
 <script>
-let step = 1;
 let userName = "";
+let userWork = "";
+let userInterest = "";
 
 function send() {
   let input = document.getElementById("input");
   let text = input.value.trim();
+  let lower = text.toLowerCase();
 
   if (text === "") return;
 
@@ -130,51 +28,62 @@ function send() {
     typing.remove();
 
     let reply = "";
-    let lower = text.toLowerCase();
 
-    // BASIC SAFETY (no dumb agreeing)
-    if (lower.includes("abuse") || lower.includes("bad") || lower.includes("stupid")) {
-      reply = "😅 Chill bro… let's keep it respectful and focus on improving.";
+    // 🚫 Safety filter
+    if (lower.includes("abuse") || lower.includes("stupid") || lower.includes("idiot")) {
+      reply = "😅 Bro chill… let's keep it respectful.";
     }
 
+    // 🧠 SMART NAME DETECTION
+    else if (!userName) {
+      userName = text.split(" ")[0];
+      reply = `Nice to meet you, ${userName} 😊<br>What do you do?`;
+    }
+
+    // 💼 WORK DETECTION
+    else if (!userWork && !lower.includes(userName.toLowerCase())) {
+      userWork = text;
+      reply = `Got it 👍 So ${userName}, what do you enjoy doing? (hobbies/interests)`;
+    }
+
+    // 🎯 INTEREST DETECTION
+    else if (!userInterest) {
+      userInterest = text;
+
+      reply = `
+      🔥 Your final introduction:<br><br>
+      Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
+      Say it confidently 💪
+      `;
+    }
+
+    // 💬 SMART NORMAL CHAT
     else {
-      if (step === 1) {
-        userName = text;
-        reply = `Nice to meet you, ${userName} 😊<br>What do you do? (student/job/etc)`;
-        step = 2;
+      if (lower.includes("nervous")) {
+        reply = "It's normal 😄 Everyone feels nervous. Practice daily and you'll improve.";
       }
-
-      else if (step === 2) {
-        reply = "Good 👍 Now tell me your interests (like football, music, gym, etc)";
-        step = 3;
+      else if (lower.includes("how")) {
+        reply = "Start simple 👍 Speak slowly, smile, and maintain eye contact.";
       }
-
-      else if (step === 3) {
-        reply = `🔥 Perfect! Here is your introduction:<br><br>
-        Hi, I am ${userName}. I am ${text}. I enjoy learning new things.<br><br>
-        Say it confidently 💪`;
-        step = 4;
+      else if (lower.includes("intro")) {
+        reply = `Try this:<br>Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.`;
       }
-
       else {
-        reply = "Keep practicing 💪 You are improving!";
+        reply = `Nice 👍 ${userName}, you're improving. Keep practicing daily 💪`;
       }
     }
 
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  }, 800);
+  }, 700);
 }
 
-/* ENTER KEY FIX (IMPORTANT) */
+// ENTER KEY FIX
 document.getElementById("input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
-    e.preventDefault(); // prevent page bug
+    e.preventDefault();
     send();
   }
 });
 </script>
-
-</body>
-</html>
