@@ -103,18 +103,22 @@ function cleanText(text) {
 function extractName(text) {
   let t = text.toLowerCase();
 
-  if (t.includes("my name is")) {
-    return text.split("my name is")[1].trim().split(" ")[0];
-  }
-
-  if (t.includes("i am")) {
-    return text.split("i am")[1].trim().split(" ")[0];
-  }
+  if (t.includes("my name is")) return text.split("my name is")[1].trim().split(" ")[0];
+  if (t.includes("i am")) return text.split("i am")[1].trim().split(" ")[0];
 
   return text.split(" ")[0];
 }
 
-// SEND FUNCTION
+// DETECT TYPE
+function detectType(text) {
+  let t = text.toLowerCase();
+
+  if (t.includes("student") || t.includes("study") || t.includes("job") || t.includes("work")) return "work";
+  if (t.includes("like") || t.includes("love") || t.includes("football") || t.includes("music") || t.includes("gym")) return "interest";
+  return "unknown";
+}
+
+// SEND
 function send() {
   let input = document.getElementById("input");
   let text = input.value.trim();
@@ -124,11 +128,9 @@ function send() {
 
   let chat = document.getElementById("chat");
 
-  // USER MESSAGE
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
-  // TYPING EFFECT
   let typing = document.createElement("div");
   typing.className = "message ai typing";
   typing.innerText = "Typing...";
@@ -139,114 +141,89 @@ function send() {
   setTimeout(() => {
 
     typing.remove();
-
     let reply = "";
 
     // 🚫 BAD WORDS
-    if (
-      lower.includes("hate") ||
-      lower.includes("stupid") ||
-      lower.includes("idiot") ||
-      lower.includes("fuck")
-    ) {
-      reply = "😐 Not appropriate. Give a proper answer.";
+    if (lower.includes("hate") || lower.includes("stupid") || lower.includes("idiot") || lower.includes("fuck")) {
+      reply = "😐 Keep it respectful. Answer properly.";
     }
 
-    // 🧠 NAME STEP
-    else if (!userName) {
+    // 🧠 AUTO DETECT (SMART PART)
+    else {
 
-      if (lower === "hi" || lower === "hello" || text.length < 2) {
-        reply = "🤔 That's not your name. Try: My name is Rohan";
-      } else {
+      let type = detectType(text);
+
+      // NAME
+      if (!userName) {
         userName = extractName(text);
-        reply = `Nice to meet you ${userName} 😊 What do you do?`;
+        reply = `Nice to meet you ${userName} 😊 Tell me what you do or what you like.`;
       }
-    }
 
-    // 🧠 WORK STEP
-    else if (!userWork) {
-
-      if (
-        lower.includes("nothing") ||
-        lower.length < 4 ||
-        lower === userName.toLowerCase()
-      ) {
-        reply = "😅 Give a real answer like: student, learning coding, etc.";
-      } else {
+      // WORK
+      else if (!userWork && type === "work") {
         userWork = text;
-        reply = "Good 👍 What are your interests?";
+        reply = "Nice 👍 What are your interests?";
       }
-    }
 
-    // 🧠 INTEREST STEP
-    else if (!userInterest) {
-
-      if (
-        lower.includes("nothing") ||
-        lower.includes("hate") ||
-        lower.length < 3 ||
-        lower === userName.toLowerCase()
-      ) {
-        reply = "🤔 That's not a valid interest. Try: football, music, gym.";
-      } else {
+      // INTEREST
+      else if (!userInterest && type === "interest") {
         userInterest = text;
         introDone = true;
 
         reply = `
 🔥 Your intro:<br><br>
-Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
+Hi, I am ${userName}. I am ${userWork || "a learner"}. I like ${userInterest}.<br><br>
 
 🎉 Level 1 Complete!<br>
 Type <b>next</b> for Level 2 🚀
         `;
       }
-    }
 
-    // 🎯 AFTER COMPLETE
-    else {
-
-      if (lower.includes("next")) {
-        reply = "🚀 Level 2: Small Talk<br>Ask: How are you?";
+      // IF USER SKIPS STEPS
+      else if (!userWork) {
+        reply = "🤔 Tell me what you do (student/job)";
       }
 
-      else if (lower.includes("how are you")) {
-        reply = "I'm good 😄 What about you?";
+      else if (!userInterest) {
+        reply = "🤔 Tell me your interests (football, music, etc)";
       }
 
-      else if (lower.includes("nothing")) {
-        reply = "😅 Say something meaningful.";
-      }
-
-      else if (text.length < 5) {
-        reply = "🤔 Speak properly… full sentence.";
-      }
-
+      // 🎯 AFTER COMPLETE
       else {
-        reply = "👍 Good, keep practicing!";
+
+        if (lower.includes("next")) {
+          reply = "🚀 Level 2: Small Talk<br>Ask me: How are you?";
+        }
+
+        else if (lower.includes("how are you")) {
+          reply = "I'm good 😄 What about you?";
+        }
+
+        else if (text.length < 5) {
+          reply = "🤔 Speak properly… full sentence.";
+        }
+
+        else {
+          reply = `👍 Nice ${userName}, you're improving.`;
+        }
       }
 
     }
 
-    // SHOW AI MESSAGE
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
   }, 600);
 }
 
-// ENTER KEY FIX
-let inputBox = document.getElementById("input");
-
-if (inputBox) {
-  inputBox.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      send();
-    }
-  });
-}
+// ENTER KEY
+document.getElementById("input").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    send();
+  }
+});
 
 </script>
-
 </body>
 </html>
