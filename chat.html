@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AI Chat</title>
+<title>AI Trainer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -86,34 +86,64 @@ button {
 </div>
 
 <script>
-let mode = "intro";   // intro → smalltalk
-let level = 1;
-
-// LEVEL 1 DATA
 let userName = "";
 let userWork = "";
 let userInterest = "";
+let introDone = false;
 
-// LEVEL 2 DATA
-let smallTalkStep = 1;
-let convoCount = 0;
-
-function clean(text){
-  return text.toLowerCase();
+// CLEAN TEXT
+function cleanText(text) {
+  return text.toLowerCase().replace(/[^a-z ]/g, "").trim();
 }
 
-function send(){
+// NAME EXTRACT
+function extractName(text) {
+  let t = text.toLowerCase();
+
+  if (t.includes("my name is")) {
+    return text.split("my name is")[1].trim().split(" ")[0];
+  }
+
+  if (t.includes("i am")) {
+    return text.split("i am")[1].trim().split(" ")[0];
+  }
+
+  return text.split(" ")[0];
+}
+
+// VALIDATION
+function isName(text) {
+  return text.split(" ").length <= 3;
+}
+
+function isWork(text) {
+  return text.length > 3 && !text.toLowerCase().includes("nothing");
+}
+
+function isInterest(text) {
+  return text.length > 3 && !text.toLowerCase().includes("nothing");
+}
+
+// RANDOM REPLY
+function randomReply(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// MAIN FUNCTION
+function send() {
   let input = document.getElementById("input");
   let text = input.value.trim();
-  let lower = clean(text);
+  let lower = cleanText(text);
 
-  if(!text) return;
+  if (!text) return;
 
   let chat = document.getElementById("chat");
 
+  // USER MESSAGE
   chat.innerHTML += `<div class="message user">${text}</div>`;
   input.value = "";
 
+  // TYPING EFFECT
   let typing = document.createElement("div");
   typing.className = "message ai typing";
   typing.innerText = "Typing...";
@@ -121,133 +151,101 @@ function send(){
 
   chat.scrollTop = chat.scrollHeight;
 
-  setTimeout(()=>{
-
+  setTimeout(() => {
     typing.remove();
+
     let reply = "";
 
-    // =========================
-    // 🔵 LEVEL 1 (INTRO)
-    // =========================
-    if(mode === "intro"){
+    // 🚫 ABUSE
+    if (lower.includes("fuck") || lower.includes("stupid")) {
+      reply = "😅 Chill bro… keep it respectful.";
+    }
 
-      if(!userName){
-        userName = text.split(" ")[0];
+    // 🧠 NAME
+    else if (!userName) {
+      if (!isName(text)) {
+        reply = "🤔 That doesn't look like a name. Try: 'My name is Rohan'";
+      } else {
+        userName = extractName(text);
         reply = `Nice to meet you ${userName} 😊 What do you do?`;
       }
+    }
 
-      else if(!userWork){
+    // 🧠 WORK
+    else if (!userWork) {
+      if (!isWork(text)) {
+        reply = "😅 Don't say 'nothing'. Try: student / learning coding / etc.";
+      } else {
         userWork = text;
-        reply = "Good 👍 What are your interests?";
+        reply = randomReply([
+          "Nice 👍 What are your interests?",
+          "Good 👌 What do you like doing?",
+          "Cool 😎 Tell me your hobbies"
+        ]);
       }
+    }
 
-      else if(!userInterest){
+    // 🧠 INTEREST
+    else if (!userInterest) {
+      if (!isInterest(text)) {
+        reply = "🤔 Tell real interest like football, music, gym.";
+      } else {
         userInterest = text;
+        introDone = true;
 
         reply = `
 🔥 Your intro:<br><br>
 Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
 
 🎉 Level 1 Complete!<br>
-Type <b>next</b> to start Small Talk 🚀
+Type <b>next</b> for Level 2 🚀
         `;
-      }
-
-      else{
-        if(lower.includes("next")){
-          mode = "smalltalk";
-          level = 2;
-
-          reply = `
-🎭 Level 2: Small Talk<br><br>
-Situation: You meet a new student in college.<br>
-👉 Start conversation (say hi)
-          `;
-        }
-        else{
-          reply = "Type 'next' to continue 🚀";
-        }
       }
     }
 
-    // =========================
-    // 🟣 LEVEL 2 (SMALL TALK)
-    // =========================
-    else if(mode === "smalltalk"){
+    // 🎯 AFTER INTRO
+    else {
 
-      // STEP 1: GREETING
-      if(smallTalkStep === 1){
-
-        if(lower.includes("hi") || lower.includes("hello")){
-          smallTalkStep = 2;
-          reply = "Nice start 👍 Now ask me a question.";
-        }
-        else{
-          reply = "Start with greeting like 'Hi' or 'Hello'";
-        }
+      if (lower.includes("next")) {
+        reply = "🚀 Level 2: Small Talk<br>Ask me: 'How are you?' or 'What’s up?'";
       }
 
-      // STEP 2: QUESTION
-      else if(smallTalkStep === 2){
-
-        if(text.includes("?") || lower.includes("how") || lower.includes("what")){
-          smallTalkStep = 3;
-          reply = "I'm good 😄 I'm a designer. What about you?";
-        }
-        else{
-          reply = "Ask a question (example: How are you?)";
-        }
+      else if (lower.includes("how are you")) {
+        reply = "I'm good 😄 What about you?";
       }
 
-      // STEP 3: CONTINUE CONVO
-      else if(smallTalkStep === 3){
-
-        convoCount++;
-
-        const replies = [
-          "Nice 👍 that's interesting!",
-          "Oh cool 😄 tell me more",
-          "Good one 💪 what else?",
-          "Haha okay 😂"
-        ];
-
-        reply = replies[Math.floor(Math.random()*replies.length)];
-
-        // END AFTER 3 TURNS
-        if(convoCount >= 3){
-          reply += `
-<br><br>🎉 Level 2 Complete!<br>
-You can handle small talk 😄<br>
-Type <b>next</b> for next level 🚀
-          `;
-          smallTalkStep = 4;
-        }
+      else if (lower.includes("nothing")) {
+        reply = "😅 Bro say something interesting… what you did today?";
       }
 
-      // AFTER COMPLETE
-      else if(smallTalkStep === 4){
+      else if (text.length < 5) {
+        reply = "🤔 Say full sentence bro… don't be lazy 😄";
+      }
 
-        if(lower.includes("next")){
-          reply = "🚀 Level 3 (Confidence Training) coming soon...";
-        }
-        else{
-          reply = "Type 'next' to continue 🚀";
-        }
+      else {
+        reply = randomReply([
+          "Nice 👍 keep going!",
+          "Good sentence 👌",
+          "You're improving 💪",
+          "That’s better 🔥"
+        ]);
       }
     }
 
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  },600);
+  }, 600);
 }
 
-// ENTER KEY
-document.getElementById("input").addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
+// ENTER KEY FIX
+document.getElementById("input").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
     e.preventDefault();
     send();
   }
 });
 </script>
+
+</body>
 </html>
