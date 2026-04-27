@@ -1,13 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Trainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0d1117;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  padding: 15px;
+  background: #161b22;
+  text-align: center;
+  font-weight: bold;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.user {
+  background: #238636;
+  margin-left: auto;
+}
+
+.ai {
+  background: #161b22;
+}
+
+.input-box {
+  display: flex;
+  padding: 10px;
+  background: #161b22;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+}
+
+button {
+  padding: 12px;
+  background: #238636;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.typing {
+  opacity: 0.6;
+  font-style: italic;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">AI Trainer 🤖</div>
+
+<div class="chat-box" id="chat">
+  <div class="message ai">Hey 👋 Tell me your name</div>
+</div>
+
+<div class="input-box">
+  <input id="input" placeholder="Type..." />
+  <button onclick="send()">Send</button>
+</div>
+
 <script>
+
 let userName = "";
 let userWork = "";
 let userInterest = "";
 let introDone = false;
 
+// CLEAN TEXT
 function cleanText(text) {
   return text.toLowerCase().replace(/[^a-z ]/g, "").trim();
 }
 
+// EXTRACT NAME
 function extractName(text) {
   let t = text.toLowerCase();
 
@@ -22,6 +114,7 @@ function extractName(text) {
   return text.split(" ")[0];
 }
 
+// SEND FUNCTION
 function send() {
   let input = document.getElementById("input");
   let text = input.value.trim();
@@ -43,7 +136,6 @@ function send() {
 
   chat.scrollTop = chat.scrollHeight;
 
-  // ✅ IMPORTANT: RESPONSE DELAY
   setTimeout(() => {
 
     typing.remove();
@@ -57,21 +149,23 @@ function send() {
       lower.includes("idiot") ||
       lower.includes("fuck")
     ) {
-      reply = "😐 That’s not appropriate. Give a proper answer.";
+      reply = "😐 Not appropriate. Give a proper answer.";
     }
 
-    // 🧠 NAME
+    // 🧠 NAME STEP
     else if (!userName) {
+
       if (lower === "hi" || lower === "hello" || text.length < 2) {
-        reply = "🤔 That’s not your name. Try: 'My name is Rohan'";
+        reply = "🤔 That's not your name. Try: My name is Rohan";
       } else {
         userName = extractName(text);
         reply = `Nice to meet you ${userName} 😊 What do you do?`;
       }
     }
 
-    // 🧠 WORK
+    // 🧠 WORK STEP
     else if (!userWork) {
+
       if (
         lower.includes("nothing") ||
         lower.length < 4 ||
@@ -84,15 +178,16 @@ function send() {
       }
     }
 
-    // 🧠 INTEREST
+    // 🧠 INTEREST STEP
     else if (!userInterest) {
+
       if (
         lower.includes("nothing") ||
         lower.includes("hate") ||
         lower.length < 3 ||
         lower === userName.toLowerCase()
       ) {
-        reply = "🤔 That’s not a valid interest. Try: football, music, gym.";
+        reply = "🤔 That's not a valid interest. Try: football, music, gym.";
       } else {
         userInterest = text;
         introDone = true;
@@ -119,7 +214,7 @@ Type <b>next</b> for Level 2 🚀
       }
 
       else if (lower.includes("nothing")) {
-        reply = "😅 Say something meaningful bro.";
+        reply = "😅 Say something meaningful.";
       }
 
       else if (text.length < 5) {
@@ -132,18 +227,26 @@ Type <b>next</b> for Level 2 🚀
 
     }
 
-    // ✅ SHOW AI MESSAGE
+    // SHOW AI MESSAGE
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
   }, 600);
 }
 
-// ENTER KEY
-document.getElementById("input").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    send();
-  }
-});
+// ENTER KEY FIX
+let inputBox = document.getElementById("input");
+
+if (inputBox) {
+  inputBox.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      send();
+    }
+  });
+}
+
 </script>
+
+</body>
+</html>
