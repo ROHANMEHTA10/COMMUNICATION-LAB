@@ -151,100 +151,95 @@ function send() {
 
   chat.scrollTop = chat.scrollHeight;
 
-  setTimeout(() => {
-    typing.remove();
+  let reply = "";
 
-    let reply = "";
+// 🚫 BAD / TOXIC FILTER
+if (
+  lower.includes("hate") ||
+  lower.includes("stupid") ||
+  lower.includes("idiot") ||
+  lower.includes("fuck")
+) {
+  reply = "😐 That’s not appropriate. Give a proper answer.";
+}
 
-    // 🚫 ABUSE
-    if (lower.includes("fuck") || lower.includes("stupid")) {
-      reply = "😅 Chill bro… keep it respectful.";
-    }
+// 🧠 NAME STEP
+else if (!userName) {
 
-    // 🧠 NAME
-    else if (!userName) {
-      if (!isName(text)) {
-        reply = "🤔 That doesn't look like a name. Try: 'My name is Rohan'";
-      } else {
-        userName = extractName(text);
-        reply = `Nice to meet you ${userName} 😊 What do you do?`;
-      }
-    }
+  if (lower === "hi" || lower === "hello" || text.length < 2) {
+    reply = "🤔 That’s not your name. Try: 'My name is Rohan'";
+  } else {
+    userName = extractName(text);
+    reply = `Nice to meet you ${userName} 😊 What do you do?`;
+  }
 
-    // 🧠 WORK
-    else if (!userWork) {
-      if (!isWork(text)) {
-        reply = "😅 Don't say 'nothing'. Try: student / learning coding / etc.";
-      } else {
-        userWork = text;
-        reply = randomReply([
-          "Nice 👍 What are your interests?",
-          "Good 👌 What do you like doing?",
-          "Cool 😎 Tell me your hobbies"
-        ]);
-      }
-    }
+}
 
-    // 🧠 INTEREST
-    else if (!userInterest) {
-      if (!isInterest(text)) {
-        reply = "🤔 Tell real interest like football, music, gym.";
-      } else {
-        userInterest = text;
-        introDone = true;
+// 🧠 WORK STEP
+else if (!userWork) {
 
-        reply = `
+  if (
+    lower.includes("nothing") ||
+    lower.length < 4 ||
+    lower === userName.toLowerCase()
+  ) {
+    reply = "😅 Give a real answer like: student, learning coding, etc.";
+  } else {
+    userWork = text;
+    reply = "Good 👍 What are your interests?";
+  }
+
+}
+
+// 🧠 INTEREST STEP
+else if (!userInterest) {
+
+  if (
+    lower.includes("nothing") ||
+    lower.includes("hate") ||
+    lower.length < 3 ||
+    lower === userName.toLowerCase()
+  ) {
+    reply = "🤔 That’s not a valid interest. Try: football, music, gym.";
+  } else {
+    userInterest = text;
+    introDone = true;
+
+    reply = `
 🔥 Your intro:<br><br>
 Hi, I am ${userName}. I am ${userWork}. I like ${userInterest}.<br><br>
 
 🎉 Level 1 Complete!<br>
 Type <b>next</b> for Level 2 🚀
-        `;
-      }
-    }
+    `;
+  }
 
-    // 🎯 AFTER INTRO
-    else {
-
-      if (lower.includes("next")) {
-        reply = "🚀 Level 2: Small Talk<br>Ask me: 'How are you?' or 'What’s up?'";
-      }
-
-      else if (lower.includes("how are you")) {
-        reply = "I'm good 😄 What about you?";
-      }
-
-      else if (lower.includes("nothing")) {
-        reply = "😅 Bro say something interesting… what you did today?";
-      }
-
-      else if (text.length < 5) {
-        reply = "🤔 Say full sentence bro… don't be lazy 😄";
-      }
-
-      else {
-        reply = randomReply([
-          "Nice 👍 keep going!",
-          "Good sentence 👌",
-          "You're improving 💪",
-          "That’s better 🔥"
-        ]);
-      }
-    }
-
-    chat.innerHTML += `<div class="message ai">${reply}</div>`;
-    chat.scrollTop = chat.scrollHeight;
-
-  }, 600);
 }
 
-// ENTER KEY FIX
-document.getElementById("input").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    send();
+// 🎯 AFTER COMPLETE
+else {
+
+  if (lower.includes("next")) {
+    reply = "🚀 Level 2: Small Talk<br>Ask: How are you?";
   }
-});
+
+  else if (lower.includes("how are you")) {
+    reply = "I'm good 😄 What about you?";
+  }
+
+  else if (lower.includes("nothing")) {
+    reply = "😅 Say something meaningful bro.";
+  }
+
+  else if (text.length < 5) {
+    reply = "🤔 Speak properly… full sentence.";
+  }
+
+  else {
+    reply = "👍 Good, keep practicing!";
+  }
+
+}
 </script>
 
 </body>
