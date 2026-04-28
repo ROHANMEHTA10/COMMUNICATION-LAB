@@ -92,16 +92,16 @@ button {
 let userName = "";
 let userWork = "";
 let userInterest = "";
-let introDone = false;
+let stage = "name";
 
-// CLEAN TEXT
-function cleanText(text) {
-  return text.toLowerCase().replace(/[^a-z ]/g, "").trim();
+// CLEAN
+function clean(text) {
+  return text.toLowerCase().trim();
 }
 
-// EXTRACT NAME
-function extractName(text) {
-  let t = text.toLowerCase();
+// NAME EXTRACT
+function getName(text) {
+  let t = clean(text);
 
   if (t.includes("my name is")) return text.split("my name is")[1].trim().split(" ")[0];
   if (t.includes("i am")) return text.split("i am")[1].trim().split(" ")[0];
@@ -109,21 +109,26 @@ function extractName(text) {
   return text.split(" ")[0];
 }
 
-// DETECT TYPE
-function detectType(text) {
-  let t = text.toLowerCase();
+// VALIDATION
+function isValidName(text) {
+  return text.length > 2 && !text.toLowerCase().includes("hi");
+}
 
-  if (t.includes("student") || t.includes("study") || t.includes("job") || t.includes("work")) return "work";
-  if (t.includes("like") || t.includes("love") || t.includes("football") || t.includes("music") || t.includes("gym")) return "interest";
-  return "unknown";
+function isValidWork(text) {
+  let t = clean(text);
+  return !(t.includes("nothing") || t.length < 4);
+}
+
+function isValidInterest(text) {
+  let t = clean(text);
+  return !(t.includes("nothing") || t.includes("hate") || t.length < 3);
 }
 
 // SEND
 function send() {
+
   let input = document.getElementById("input");
   let text = input.value.trim();
-  let lower = cleanText(text);
-
   if (!text) return;
 
   let chat = document.getElementById("chat");
@@ -136,87 +141,106 @@ function send() {
   typing.innerText = "Typing...";
   chat.appendChild(typing);
 
-  chat.scrollTop = chat.scrollHeight;
-
   setTimeout(() => {
 
     typing.remove();
     let reply = "";
+    let lower = clean(text);
 
-    // 🚫 BAD WORDS
-    if (lower.includes("hate") || lower.includes("stupid") || lower.includes("idiot") || lower.includes("fuck")) {
-      reply = "😐 Keep it respectful. Answer properly.";
+    // 🚫 BAD BEHAVIOR
+    if (lower.includes("kill") || lower.includes("hate") || lower.includes("stupid")) {
+      reply = "⚠️ This is not appropriate. Answer professionally like in an interview.";
     }
 
-    // 🧠 AUTO DETECT (SMART PART)
-    else {
+    // 🧠 NAME STAGE
+    else if (stage === "name") {
 
-      let type = detectType(text);
-
-      // NAME
-      if (!userName) {
-        userName = extractName(text);
-        reply = `Nice to meet you ${userName} 😊 Tell me what you do or what you like.`;
+      if (!isValidName(text)) {
+        reply = "❌ That doesn’t sound like a proper name. Say: 'My name is Rohan'.";
+      } else {
+        userName = getName(text);
+        stage = "work";
+        reply = `✅ Nice to meet you, ${userName}. What do you do? (student / job)`;
       }
+    }
 
-      // WORK
-      else if (!userWork && type === "work") {
+    // 🧠 WORK STAGE
+    else if (stage === "work") {
+
+      if (!isValidWork(text)) {
+        reply = "❌ That’s not a strong answer. Try: 'I am a student' or 'I am learning coding'.";
+      } else {
         userWork = text;
-        reply = "Nice 👍 What are your interests?";
+        stage = "interest";
+        reply = "👍 Good. Now tell me your interests (skills or hobbies).";
       }
+    }
 
-      // INTEREST
-      else if (!userInterest && type === "interest") {
+    // 🧠 INTEREST STAGE
+    else if (stage === "interest") {
+
+      if (!isValidInterest(text)) {
+        reply = "❌ That’s not a good interest. Say something positive like football, gym, music.";
+      } else {
         userInterest = text;
-        introDone = true;
+        stage = "complete";
 
         reply = `
-🔥 Your intro:<br><br>
-Hi, I am ${userName}. I am ${userWork || "a learner"}. I like ${userInterest}.<br><br>
+🔥 Final Introduction:<br><br>
+Hi, I am ${userName}. I am ${userWork}. I am interested in ${userInterest}.<br><br>
 
-🎉 Level 1 Complete!<br>
-Type <b>next</b> for Level 2 🚀
+🎯 Feedback:<br>
+✔ Clear structure<br>
+✔ Good attempt<br>
+👉 Try speaking confidently.<br><br>
+
+Type <b>interview</b> to start real questions 🚀
         `;
       }
+    }
 
-      // IF USER SKIPS STEPS
-      else if (!userWork) {
-        reply = "🤔 Tell me what you do (student/job)";
+    // 🎯 INTERVIEW MODE
+    else if (stage === "complete") {
+
+      if (lower.includes("interview")) {
+        stage = "q1";
+        reply = "🎤 Interview Q1: Why should we select you?";
       }
 
-      else if (!userInterest) {
-        reply = "🤔 Tell me your interests (football, music, etc)";
-      }
-
-      // 🎯 AFTER COMPLETE
       else {
-
-        if (lower.includes("next")) {
-          reply = "🚀 Level 2: Small Talk<br>Ask me: How are you?";
-        }
-
-        else if (lower.includes("how are you")) {
-          reply = "I'm good 😄 What about you?";
-        }
-
-        else if (text.length < 5) {
-          reply = "🤔 Speak properly… full sentence.";
-        }
-
-        else {
-          reply = `👍 Nice ${userName}, you're improving.`;
-        }
+        reply = "👉 Type 'interview' to continue.";
       }
+    }
 
+    // 🧠 INTERVIEW Q1
+    else if (stage === "q1") {
+
+      if (text.length < 10) {
+        reply = "❌ Too short. Give a proper answer with confidence.";
+      } else {
+        stage = "q2";
+        reply = "👍 Good attempt. Q2: What are your strengths?";
+      }
+    }
+
+    // 🧠 INTERVIEW Q2
+    else if (stage === "q2") {
+
+      if (text.length < 10) {
+        reply = "❌ Not strong enough. Mention real strengths.";
+      } else {
+        stage = "done";
+        reply = "🎉 Great! You completed basic interview practice. Keep improving 💪";
+      }
     }
 
     chat.innerHTML += `<div class="message ai">${reply}</div>`;
     chat.scrollTop = chat.scrollHeight;
 
-  }, 600);
+  }, 500);
 }
 
-// ENTER KEY
+// ENTER
 document.getElementById("input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
